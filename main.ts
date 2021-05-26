@@ -6,6 +6,7 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Food, function (sprite, otherSprite) {
     info.changeScoreBy(1)
     Enemy2.destroy(effects.fire, 1)
+    Bullet.destroy(effects.fire, 1)
     animateEnemy2 = 0
     pause(500)
 })
@@ -38,7 +39,7 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         `, Bullet, 125, 0)
-    Bullet.setPosition(30, Magician.y)
+    Bullet.setPosition(Magician.x, Magician.y)
     pause(750)
 })
 sprites.onOverlap(SpriteKind.Food, SpriteKind.Player, function (sprite, otherSprite) {
@@ -68,12 +69,13 @@ function scoring () {
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
     info.changeScoreBy(1)
     Enemy1.destroy(effects.fire, 1)
+    Bullet.destroy(effects.fire, 1)
     animateEnemy1 = 0
     pause(500)
 })
 let animateEnemy1 = 0
-let Bullet: Sprite = null
 let animateEnemy2 = 0
+let Bullet: Sprite = null
 let velY = 0
 let Enemy2: Sprite = null
 let Enemy1: Sprite = null
@@ -260,43 +262,20 @@ Enemy2 = sprites.create(img`
     `, SpriteKind.Food)
 Magician.setPosition(25, 90)
 Magician.setStayInScreen(true)
-Enemy1.setPosition(150, 90)
-Enemy2.setPosition(145, 10)
+Magician.ax = 4500
+Enemy1.setPosition(150, 86)
+Enemy2.setPosition(230, 10)
 game.onUpdate(function () {
     Gravity()
 })
 forever(function () {
     Enemy2.setVelocity(-80, 50)
     pause(1600)
-    Enemy2.setVelocity(80, -50)
-    pause(1600)
 })
 forever(function () {
-    Enemy1.setVelocity(-80, 0)
-    pause(1550)
-})
-forever(function () {
-    pause(3200)
-    Enemy2 = sprites.create(img`
-        . . . . . . . . . . e e e e e . 
-        . . . . . . . . e e 4 4 4 4 4 e 
-        . . . . . . . e e e e e e e e . 
-        . . . . . . e 4 4 4 4 4 4 4 4 e 
-        . . . . . . e e e e e e e e e . 
-        . . d d d e e 4 4 4 4 4 4 4 4 e 
-        5 5 f d d e e e e e e e e e e . 
-        5 . d d d e e e e e e e e e e . 
-        . . . . . . e e e e e e e e . . 
-        . . . . . . . . . e . e . . . . 
-        . . . . . . . . . e . e . . . . 
-        . . . . . . . . . 5 . 5 . . . . 
-        . . . . . . . . 5 . 5 . 5 . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Food)
-    Enemy2.setPosition(145, 10)
-    Enemy2.setFlag(SpriteFlag.AutoDestroy, true)
+    if (Magician.y >= 90) {
+        info.changeLifeBy(-1)
+    }
 })
 forever(function () {
     if (info.life() >= 1) {
@@ -397,6 +376,140 @@ forever(function () {
     }
 })
 forever(function () {
+    pause(2550)
+    Enemy1 = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . f . . . . 4 e . . . 
+        . . . . . . f . . . 4 4 4 e . . 
+        . . . . . . f . . . 4 f f e e . 
+        . . . . . . f . . . 4 f f f e . 
+        . . . . . 5 5 5 4 4 4 4 4 e e . 
+        . . . . . . 4 4 4 4 4 4 4 4 e . 
+        . . . . . . . . . . 4 4 4 e e . 
+        . . . . . . . . . . f f 5 f f . 
+        . . . . . . . . . . 4 4 4 e e . 
+        . . . . . . . . . . 4 4 4 e e e 
+        . . . . . . . . . 4 4 4 4 4 e e 
+        . . . . . . . . . 4 4 4 4 4 4 e 
+        `, SpriteKind.Enemy)
+    animateEnemy1 = 0
+    Enemy1.setPosition(scene.cameraProperty(CameraProperty.X) + 60, 86)
+    Enemy1.setVelocity(-50, 0)
+    Enemy1.setFlag(SpriteFlag.AutoDestroy, true)
+})
+forever(function () {
+    pause(3200)
+    Enemy2 = sprites.create(img`
+        . . . . . . . . . . e e e e e . 
+        . . . . . . . . e e 4 4 4 4 4 e 
+        . . . . . . . e e e e e e e e . 
+        . . . . . . e 4 4 4 4 4 4 4 4 e 
+        . . . . . . e e e e e e e e e . 
+        . . d d d e e 4 4 4 4 4 4 4 4 e 
+        5 5 f d d e e e e e e e e e e . 
+        5 . d d d e e e e e e e e e e . 
+        . . . . . . e e e e e e e e . . 
+        . . . . . . . . . e . e . . . . 
+        . . . . . . . . . e . e . . . . 
+        . . . . . . . . . 5 . 5 . . . . 
+        . . . . . . . . 5 . 5 . 5 . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Food)
+    animateEnemy2 = 0
+    Enemy2.setPosition(Magician.x + 215, 10)
+    Enemy2.setVelocity(-80, 50)
+    Enemy2.setFlag(SpriteFlag.AutoDestroy, true)
+})
+forever(function () {
+    if (info.life() >= 1) {
+        if (animateEnemy2 == 0) {
+            animation.runImageAnimation(
+            Enemy2,
+            [img`
+                . . . . . . . . . . e e e e e . 
+                . . . . . . . . e e 4 4 4 4 4 e 
+                . . . . . . . e e e e e e e e . 
+                . . . . . . e 4 4 4 4 4 4 4 4 e 
+                . . . . . . e e e e e e e e e . 
+                . . d d d e e 4 4 4 4 4 4 4 4 e 
+                5 5 f d d e e e e e e e e e e . 
+                5 . d d d e e e e e e e e e e . 
+                . . . . . . e e e e e e e e . . 
+                . . . . . . . . . e . e . . . . 
+                . . . . . . . . . e . e . . . . 
+                . . . . . . . . . 5 . 5 . . . . 
+                . . . . . . . . 5 . 5 . 5 . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                `,img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . e e e e e e e e 
+                . . . . . . . e 4 4 4 4 4 4 4 e 
+                . . . . . . e e e e e e e e e . 
+                . . . . . . e 4 4 4 4 4 4 4 4 e 
+                . . d d d e e e e e e e e e e . 
+                5 5 f d d e e e e e e e e e e . 
+                5 . d d d e e e e e e e e e e . 
+                . . . . . . e e e e e e e e . . 
+                . . . . . . . . . e . e . . . . 
+                . . . . . . . . . e . e . . . . 
+                . . . . . . . . . 5 . 5 . . . . 
+                . . . . . . . . 5 . 5 . 5 . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                `,img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . e e e e e e e e . 
+                . . . . . . e 4 4 4 4 4 4 4 4 e 
+                . . . . . . e e e e e e e e e . 
+                . . d d d e e 4 4 4 4 4 4 4 4 e 
+                5 5 f d d e e e e e e e e e e . 
+                5 . d d d e e e e e e e e e e . 
+                . . . . . . e e e e e e e e . . 
+                . . . . . . . . . e . e . . . . 
+                . . . . . . . . . e . e . . . . 
+                . . . . . . . . . 5 . 5 . . . . 
+                . . . . . . . . 5 . 5 . 5 . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                `,img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . e e e e e e e e 
+                . . . . . . . e 4 4 4 4 4 4 4 e 
+                . . . . . . e e e e e e e e e . 
+                . . . . . . e 4 4 4 4 4 4 4 4 e 
+                . . d d d e e e e e e e e e e . 
+                5 5 f d d e e e e e e e e e e . 
+                5 . d d d e e e e e e e e e e . 
+                . . . . . . e e e e e e e e . . 
+                . . . . . . . . . e . e . . . . 
+                . . . . . . . . . e . e . . . . 
+                . . . . . . . . . 5 . 5 . . . . 
+                . . . . . . . . 5 . 5 . 5 . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                `],
+            200,
+            true
+            )
+            animateEnemy2 = 1
+        }
+    }
+})
+forever(function () {
+    scene.centerCameraAt(Magician.x + 60, 0)
+})
+forever(function () {
     if (info.life() >= 1) {
         if (animate == 0) {
             animation.runImageAnimation(
@@ -493,109 +606,4 @@ forever(function () {
             animate = 1
         }
     }
-})
-forever(function () {
-    if (info.life() >= 1) {
-        if (animateEnemy2 == 0) {
-            animation.runImageAnimation(
-            Enemy2,
-            [img`
-                . . . . . . . . . . e e e e e . 
-                . . . . . . . . e e 4 4 4 4 4 e 
-                . . . . . . . e e e e e e e e . 
-                . . . . . . e 4 4 4 4 4 4 4 4 e 
-                . . . . . . e e e e e e e e e . 
-                . . d d d e e 4 4 4 4 4 4 4 4 e 
-                5 5 f d d e e e e e e e e e e . 
-                5 . d d d e e e e e e e e e e . 
-                . . . . . . e e e e e e e e . . 
-                . . . . . . . . . e . e . . . . 
-                . . . . . . . . . e . e . . . . 
-                . . . . . . . . . 5 . 5 . . . . 
-                . . . . . . . . 5 . 5 . 5 . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                `,img`
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . e e e e e e e e 
-                . . . . . . . e 4 4 4 4 4 4 4 e 
-                . . . . . . e e e e e e e e e . 
-                . . . . . . e 4 4 4 4 4 4 4 4 e 
-                . . d d d e e e e e e e e e e . 
-                5 5 f d d e e e e e e e e e e . 
-                5 . d d d e e e e e e e e e e . 
-                . . . . . . e e e e e e e e . . 
-                . . . . . . . . . e . e . . . . 
-                . . . . . . . . . e . e . . . . 
-                . . . . . . . . . 5 . 5 . . . . 
-                . . . . . . . . 5 . 5 . 5 . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                `,img`
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . e e e e e e e e . 
-                . . . . . . e 4 4 4 4 4 4 4 4 e 
-                . . . . . . e e e e e e e e e . 
-                . . d d d e e 4 4 4 4 4 4 4 4 e 
-                5 5 f d d e e e e e e e e e e . 
-                5 . d d d e e e e e e e e e e . 
-                . . . . . . e e e e e e e e . . 
-                . . . . . . . . . e . e . . . . 
-                . . . . . . . . . e . e . . . . 
-                . . . . . . . . . 5 . 5 . . . . 
-                . . . . . . . . 5 . 5 . 5 . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                `,img`
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . e e e e e e e e 
-                . . . . . . . e 4 4 4 4 4 4 4 e 
-                . . . . . . e e e e e e e e e . 
-                . . . . . . e 4 4 4 4 4 4 4 4 e 
-                . . d d d e e e e e e e e e e . 
-                5 5 f d d e e e e e e e e e e . 
-                5 . d d d e e e e e e e e e e . 
-                . . . . . . e e e e e e e e . . 
-                . . . . . . . . . e . e . . . . 
-                . . . . . . . . . e . e . . . . 
-                . . . . . . . . . 5 . 5 . . . . 
-                . . . . . . . . 5 . 5 . 5 . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                `],
-            200,
-            true
-            )
-            animateEnemy2 = 1
-        }
-    }
-})
-forever(function () {
-    pause(1500)
-    Enemy1 = sprites.create(img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . f . . . . 4 e . . . 
-        . . . . . . f . . . 4 4 4 e . . 
-        . . . . . . f . . . 4 f f e e . 
-        . . . . . . f . . . 4 f f f e . 
-        . . . . . 5 5 5 4 4 4 4 4 e e . 
-        . . . . . . 4 4 4 4 4 4 4 4 e . 
-        . . . . . . . . . . 4 4 4 e e . 
-        . . . . . . . . . . f f 5 f f . 
-        . . . . . . . . . . 4 4 4 e e . 
-        . . . . . . . . . . 4 4 4 e e e 
-        . . . . . . . . . 4 4 4 4 4 e e 
-        . . . . . . . . . 4 4 4 4 4 4 e 
-        `, SpriteKind.Enemy)
-    Enemy1.setVelocity(80, 0)
-    Enemy1.setPosition(150, 90)
-    Enemy1.setFlag(SpriteFlag.AutoDestroy, true)
 })
